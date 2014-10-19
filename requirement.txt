@@ -1,0 +1,8 @@
+Django==1.7
+mysql-python==1.2.3
+ipython==2.3.0
+django-crispy-forms==1.4.0
+django-reversion==1.8.4
+xlwt==0.7.5
+xlswriter==0.6.0
+django-xadmin

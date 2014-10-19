@@ -1,8 +1,17 @@
 from django.conf.urls import patterns, include, url
-
+from django.contrib import admin
+# import xadmin
+# from xadmin.plugins import xversion
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+
+admin.autodiscover()
+
+# xadmin.autodiscover()
+
+# xversion.registe_models()
+
+
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -13,5 +22,6 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
+    # url(r'xadmin/', include(xadmin.site.urls)),
 )
