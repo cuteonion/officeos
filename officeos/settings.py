@@ -2,15 +2,11 @@ import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ADMINS = (
     ('carrot', 'huluobo.mail@gmail.com'),
 )
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-MANAGERS = ADMINS
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -123,6 +119,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -138,7 +135,7 @@ INSTALLED_APPS = (
     'reversion',
     'xlsxwriter',
     'xlwt',
-    # 'xadmin',
+    'xadmin',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
