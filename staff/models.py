@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Teacher(models.Model):
+
     """teacher models"""
     name = models.CharField(max_length=5)
     age = models.IntegerField()
@@ -19,6 +20,12 @@ class Student(models.Model):
     phone_num = models.CharField(max_length=11)
     email = models.EmailField()
 
+
+class Department(models.Model):
+    bm_name = models.CharField(max_length=10)
+    bm_leader = models.ManyToMnay(Teacher)
+    bm_student = models.ManyToMnay(Student)
+    bm_teacher = models.ManyToMnay(Teacher)
 
 
 

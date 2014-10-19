@@ -1,3 +1,7 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 
-# Create your views here.
+# def addperson(leader,person,department):
+#     # if request.session.
+
+#     pass
+# # Create your views here.
