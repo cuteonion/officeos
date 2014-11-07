@@ -38,14 +38,17 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     """user tables"""
+    login_name = models.CharField(
+        max_length=50, unique=True, verbose_name="login name")
     name = models.CharField(
         max_length=50, unique=True, verbose_name="name")
     email = models.EmailField(
         max_length=50, unique=True, verbose_name="email adress")
-    login_name = models.CharField(
-        max_length=50, unique=True, verbose_name="login name")
+    telephone = models.CharField(max_length=50, verbose_name="phone")
     is_active = models.BooleanField(default=True)
     is_delete = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+
 
 
 
