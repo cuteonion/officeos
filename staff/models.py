@@ -2,49 +2,137 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser, PermissionsMixin
+    )
 
 
-class Staffuser(models.Model):
-    """extend the model User"""
-    staff_type_choice = {
-        ('teacher', u'教师'),
-        ('student', u'学生'),
-    }
-    department_type_choice = {
-        ('A', u'部门A'),
-        ('B', u'部门B'),
-        ('C', u'部门C'),
-    }
-    objects = models.Manager()
-    user = models.OneToOneField(User)
+class UserManager(BaseUserManager):
+    def create_user(
+        self, login_name, name, email, telephone, position, password=None
+            ):
+        """
+        create and save a User with given email
+        """
+        position_choice = [u'教师', u'学生']
+        if not (login_name or name or email or telephone or position):
+            raise ValueError('all the information is needed.')
+        user = self.model(
+            name=name,
+            login_name=login_name,
+            email=self.normalize_email(email),
+            telephone=telephone,
+            position=position_choice,
+            )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(
+        self, login_name, name, email, telephone, position, password=None
+            ):
+            user = create_user(login_name, name, email, telephone, position)
+            user.is_admin = True
+            user.save(using=self._db)
+
+
+class User(AbstractBaseUser):
+    """user tables"""
     name = models.CharField(
-        max_length=50, blank=False, null=True, verbose_name=u'姓名')
-    mobile = models.CharField(
-        max_length=50, blank=False, null=True, verbose_name=u'手机')
-    create_at = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
-    staff_type = models.CharField(
-        max_length=100, choices=staff_type_choice, verbose_name=u'人员身份')
-    department = models.CharField(
-        max_length=100, choices=department_type_choice, verbose_name=u'所在部门')
+        max_length=50, unique=True, verbose_name="name")
+    email = models.EmailField(
+        max_length=50, unique=True, verbose_name="email adress")
+    login_name = models.CharField(
+        max_length=50, unique=True, verbose_name="login name")
+    is_active = models.BooleanField(default=True)
+    is_delete = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return self.staff_type+':'+self.name
 
-class Department(models.Model):
-    name = models.CharField(max_length=20)
-    staffs = models.ManyToManyField(User)
-    staff_num = models.IntegerField()
 
-    def __unicode__(self):
-        return self.name
 
-class Staffship(models.Model):
-    department = models.ForeignKey(Department)
-    staff = models.ForeignKey(Staffuser)
-    is_leader = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return self.staff.name+'is in '+self.department.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class MyUser(User):
+
+
+
+# class Staffuser(models.Model):
+#     """extend the model User"""
+
+#     staff_type_choice = {
+#         ('teacher', u'教师'),
+#         ('student', u'学生'),
+#     }
+#     objects = models.Manager()
+#     user = models.OneToOneField(User)
+#     name = models.CharField(
+#         max_length=50, blank=False, null=True, verbose_name=u'姓名')
+#     mobile = models.CharField(
+#         max_length=50, blank=False, null=True, verbose_name=u'手机')
+#     create_at = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
+#     staff_type = models.CharField(
+#         max_length=100, choices=staff_type_choice, verbose_name=u'人员身份')
+
+#     def __unicode__(self):
+#         return self.staff_type+':'+self.name
+
+# class Department(models.Model):
+#     '''研究室'''
+#     department_choice = {
+#         ('A', u'研究室A'),
+#         ('B', u'研究室B'),
+#         ('C', u'研究室C'),
+#     }
+#     name = models.CharField(
+#         choices=department_choice, max_length=100, verbose_name=u'研究室')
+#     staffs = models.ManyToManyField(User, verbose_name=u'研究室人员')
+#     department_id = models.IntegerField(primary_key=True)
+#     # staff_num = models.IntegerField(verbose_name=u'研究室人数')
+
+#     def __unicode__(self):
+#         return self.name
+
+
+# class Staffship(models.Model):
+#     department = models.ForeignKey(Department, verbose_name=u'研究室')
+#     staff = models.ForeignKey(Staffuser)
+#     is_leader = models.BooleanField(default=False)
+#     ship_id = models.IntegerField(primary_key=True)
+
+#     def __unicode__(self):
+#         return self.staff.name+'is in '+self.department.name
 
 
 
