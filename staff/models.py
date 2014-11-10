@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+# from django.confimport settings
+"""for foreignkey of user unused still"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -14,12 +16,11 @@ class UserManager(BaseUserManager):
         """
         create and save a User with given email
         """
-        position_choice = [u'教师', u'学生']
         if not (login_name or name or email or telephone or position):
             raise ValueError('all the information is needed.')
         user = self.model(
-            name=name,
             login_name=login_name,
+            name=name,
             email=self.normalize_email(email),
             telephone=telephone,
             position=position_choice,
@@ -29,27 +30,91 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(
-        self, login_name, name, email, telephone, position, password=None
+        self, login_name, name, email, telephone, position, password
             ):
             user = create_user(login_name, name, email, telephone, position)
             user.is_admin = True
             user.save(using=self._db)
 
 
-class User(AbstractBaseUser):
+class MyUser(AbstractBaseUser, PermissionsMixin):
     """user tables"""
+
     login_name = models.CharField(
-        max_length=50, unique=True, verbose_name="login name")
+        pk=True, max_length=50, unique=True, verbose_name="login name")
     name = models.CharField(
         max_length=50, unique=True, verbose_name="name")
     email = models.EmailField(
         max_length=50, unique=True, verbose_name="email adress")
     telephone = models.CharField(max_length=50, verbose_name="phone")
+    position_choice = [u'所长', u'管理员', u'组长', u'教师', u'学生']
+    position = models.CharField(position_choice=position_choice)
+    last_login = models.DateTimeField()
+
     is_active = models.BooleanField(default=True)
     is_delete = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
+    is_student = models.BooleanField(default=True)
+    # is_part_leader = models.BooleanField(default=False)
+    # is_boss = models.BooleanField(default=False)
+    # is_admin = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'login_name'
+    REQUIRED_FIELDS = ['email']
+
+    def get_full_name(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.login_name
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    @property
+    def is_boss(self):
+        if self.position == u'所长':
+            return True
+        else:
+            return False
+
+    def is_admin(self):
+        if self.position == u'管理员':
+            return True
+        else:
+            return False
+
+    def is_zuzhang(self):
+        if self.position == u'组长':
+            return True
+        else:
+            return False
+
+    def is_teacher(self):
+        if self.position == u'教师':
+            return True
+        else:
+            return False
 
 
+class Department(models.Model):
+    department_id = models.IntegerField(Auto=True, primary_key=True)
+    staff = models.ManyToManyField(through='Staffship')
+    name = models.CharField(max_length=50)
+
+    @property
+    def leader(self):
+        return self.staff.objects.get(is_leader=True).name
+
+class Staffship(models.Model):
+    """staffship"""
+    staff = models.ForeignKey(MyUser)
+    department = models.ForeignKey(Department)
+
+    @property
+    def position(self):
+        return self.staff.position
 
 
 
