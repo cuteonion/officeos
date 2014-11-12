@@ -170,7 +170,7 @@ LOGGING = {
 }
 
 
-AUTH_USER_MODEL = 'staff.User'
+AUTH_USER_MODEL = 'staff.MyUser'
 #custom the user model by myself --carrot
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)

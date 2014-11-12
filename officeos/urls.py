@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 import xadmin
+import staff
 # from xadmin.plugins import xversion
 # Uncomment the next two lines to enable the admin:
 
@@ -22,5 +23,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^xadmin/', include(xadmin.site.urls)),
+    url(r'^staff/', include(staff.urls, namespace='staff'))
 
 )
