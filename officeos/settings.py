@@ -15,7 +15,7 @@ DATABASES = {
         # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'root',
-        'PASSWORD': '1120110292',
+        'PASSWORD': 'root',
         'HOST': '',
         # Empty for localhost through domain sockets
         #or '127.0.0.1' for localhost through TCP.
@@ -131,11 +131,11 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'staff',
-    'crispy_forms',
-    'reversion',
-    'xlsxwriter',
-    'xlwt',
-    'xadmin',
+    #'crispy_forms',
+    #'reversion',
+    #'xlsxwriter',
+    #'xlwt',
+    #'xadmin',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

@@ -1,56 +1,77 @@
 #-*- coding: utf-8 -*-
-# from django.confimport settings
+# from django.conf import settings
 """for foreignkey of user unused still"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser, PermissionsMixin
-    )
+    BaseUserManager, AbstractBaseUser, PermissionsMixin)
 from django.contrib.auth import authenticate
 
 class UserManager(BaseUserManager):
-    def create_user(
-        self, login_name, name, email, telephone, position, password=None,
-            ):
+    def _create_user(
+        self, login_name, email, password, is_superuser, is_staff, group_id):
         """
         create and save a User with given email
         """
-        if not (login_name or name or email or telephone or position):
+        now = timezone.now()
+        if not (login_name):
             raise ValueError('all the information is needed.')
         user = self.model(
             login_name=login_name,
-            name=name,
             email=self.normalize_email(email),
-            telephone=telephone,
-            position=position,
+            is_superuser=is_superuser,
+            # name=name,
+            # telephone=telephone,
+            # position=position,
+            last_login = now,
+            group_id=group_id,
             )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
+    def create_user(
+            self, login_name, email=None, password=None, group_id=2):
+        return self._create_user(login_name, email, password,  False, True, group_id)
+
     def create_superuser(
-        self, login_name, name, email, telephone, position, password,
-            ):
-            user = create_user(login_name, name, email, telephone, position)
-            user.is_admin = True
-            user.save(using=self._db)
+            self, login_name, email, password=None, group_id=1):
+        return self._create_user(login_name, email, password, True, True, group_id )
 
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
     """user tables"""
+    #first part user information
     user_id = models.AutoField(primary_key=True)
+    user_auth_num = models.CharField(max_length=10)
     login_name = models.CharField(
         max_length=50, unique=True,
         verbose_name="login name")
     name = models.CharField(
         max_length=50, unique=True, verbose_name="name")
     email = models.EmailField(
-        max_length=50, unique=True, verbose_name="email adress")
+        max_length=50, unique=True, verbose_name="email address")
     telephone = models.CharField(max_length=50, verbose_name="phone")
-    position_choice = [u'所长', u'管理员', u'组长', u'教师', u'学生']
-    position = models.CharField(choices=position_choice)
-    last_login_date = models.DateTimeField()
+    #second part user's position and user type
+    position_choice = (
+        ('master', u'所长'),
+        ('admin', u'管理员'),
+        ('normalmem', u'普通'),
+    )
+    position = models.CharField(choices=position_choice, max_length=10)
+    type_choice = (
+        ('teacher', u'教师'),
+        ('student', u'学生'),
+    )
+    sf_type = models.CharField(choices=type_choice, max_length=10)
+    #third part user's groups
+    group_id = models.IntegerField(default=2)
+    group_sf_choice = (
+        ('group_master', u'组长'),
+        ('group_member', u'组员'),
+    )
+    group_sf = models.CharField(choices=group_sf_choice, max_length=10)
 
     is_active = models.BooleanField(default=True)
     is_delete = models.BooleanField(default=False)
@@ -61,10 +82,15 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'login_name'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', ]
 
+    """when try to import user profile information,
+    this fields must be modified to suite the
+    exiting file's columns.
+    so that the behavior can be completed
+    """
     def __unicode__(self):
-        return self.login_name
+        return self.name
 
     def get_full_name(self):
         """the real name"""
@@ -89,19 +115,30 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         else:
             return False
 
-    def is_zuzhang(self):
-        """is department leader or not"""
-        if self.position == u'组长':
+    def is_teacher(self):
+        """is teacher or not"""
+        if self.sf_type == u'教师':
+            return True
+        else:
+            return False
+    def is_student(self):
+        """is student or not"""
+        if self.sf_type == u'学生':
             return True
         else:
             return False
 
-    def is_teacher(self):
-        """is teacher or not"""
-        if self.position == u'教师':
-            return True
-        else:
-            return False
+
+class AllGroup(models.Model):
+    group_id = models.AutoField(primary_key=True, db_column='allgroup_id')
+    group_choice = (
+        ('manage_group', u'管理组'),
+        ('study_group1', u'研究组1'),
+        ('study_group2', u'研究组2'),
+    )
+    group_name = models.CharField(choices=group_choice, max_length=10)
+    group_mem = models.ForeignKey(MyUser)
+
 
 
 # class Department(models.Model):
@@ -115,10 +152,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 #         """get the leader of the department"""
 #         return self.staff.objects.get(is_leader=True).name
 
-# class Staffship(models.Model):
-#     """staffship"""
-#     staff = models.ForeignKey(MyUser)
-#     department = models.ForeignKey(Department)
+
 
 #     @property
 #     def position(self):

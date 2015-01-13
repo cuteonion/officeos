@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from staff.models import MyUser
+from django.contrib.auth.models import User
 """import something"""
 
 
@@ -51,37 +52,41 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
-class MyUserAdmin(UserAdmin):
-    """forms to add or change MyUser instance"""
-    form = UserChangeForm
-    add_form = UserCreateForm
-    #the fields to used displaying
-    list_display = ('name', 'login_name', 'email', 'telephone', 'position',)
-    fieldsets = (
-        (None, {'fields': ('login_name', 'password',)}),
-        ('Peronalinfo', {'fields': ('name', 'email', 'telephone', )}),
-        ('Permissions', {
-            'fields': (
-                'is_boss', 'is_admin', 'is_leader', 'is_teacher',
-                'is_student',)
-            }),
-        )
 
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': (
-                'name', 'login_name', 'email', 'telephone',
-                'position', 'password1', 'password2',)}),
-    )
 
-    search_fields = ('name', 'login_name', 'email',)
-    ordering = ('name')
-    filter_horizontal = ()
-    #register the objects
-    # admin.site.unregister(User)
-    admin.site.register(MyUser, MyUserAdmin)
-    admin.site.unregiester(Group)
+
+# admin.site.unregister(User)
+admin.site.register(MyUser)
+# class MyUserAdmin(UserAdmin):
+#     """forms to add or change MyUser instance"""
+#     form = UserChangeForm
+#     add_form = UserCreateForm
+#     #the fields to used displaying
+#     list_display = ('name', 'login_name', 'email', 'telephone', 'position',)
+#     fieldsets = (
+#         (None, {'fields': ('login_name', 'password',)}),
+#         ('Peronalinfo', {'fields': ('name', 'email', 'telephone', )}),
+#         ('Permissions', {
+#             'fields': (
+#                 'is_boss', 'is_admin', 'is_leader', 'is_teacher',
+#                 'is_student',)
+#             }),
+#         )
+#
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': (
+#                 'name', 'login_name', 'email', 'telephone',
+#                 'position', 'password1', 'password2',)}),
+#     )
+#
+#     search_fields = ('name', 'login_name', 'email',)
+#     ordering = ('name')
+#     filter_horizontal = ()
+#     #register the objects
+#     # admin.site.unregister(User)
+#     admin.site.register(MyUser, MyUserAdmin)
 
 
 
