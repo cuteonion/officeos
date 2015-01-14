@@ -2,9 +2,9 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin
+# from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from staff.models import MyUser
+from models import MyUser, AllGroup
 from django.contrib.auth.models import User
 """import something"""
 
@@ -52,12 +52,10 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
-
-
+admin.site.register(MyUser)
+admin.site.register(AllGroup)
 
 # admin.site.unregister(User)
-admin.site.register(MyUser)
-# class MyUserAdmin(UserAdmin):
 #     """forms to add or change MyUser instance"""
 #     form = UserChangeForm
 #     add_form = UserCreateForm

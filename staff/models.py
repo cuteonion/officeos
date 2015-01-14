@@ -21,6 +21,7 @@ class UserManager(BaseUserManager):
             login_name=login_name,
             email=self.normalize_email(email),
             is_superuser=is_superuser,
+            is_staff=is_staff,
             # name=name,
             # telephone=telephone,
             # position=position,
@@ -72,7 +73,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         ('group_member', u'组员'),
     )
     group_sf = models.CharField(choices=group_sf_choice, max_length=10)
-
+    is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_delete = models.BooleanField(default=False)
     # is_part_leader = models.BooleanField(default=False)
