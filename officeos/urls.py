@@ -5,14 +5,14 @@ import xadmin
 
 
 xadmin.autodiscover()
-# admin.autodiscover()
+admin.autodiscover()
 from xadmin.plugins import xversion
 xversion.register_models()
 
 urlpatterns = patterns('',
     url(r'xadmin/', include(xadmin.site.urls)),
     url(r'^staff/', include('staff.urls', namespace='staff')),
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
 #
 # urlpatterns = patterns('',
